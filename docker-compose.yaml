@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:3.2-jessie
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - backend
+  server:
+    env_file:
+      - .env
+    build: ./server
+    depends_on:
+      - mongo
+    image: evzpav/documents-crud-server
+    ports:
+      - "3000:1323"
+    links:
+      - "mongo:localhost"
+    networks:
+      - backend
+  client:
+    build: ./client
+    image: evzpav/documents-crud-client
+    ports:
+      - "8080:80"
+networks:
+  backend:
+    driver: "bridge"
